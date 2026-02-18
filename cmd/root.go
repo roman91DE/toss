@@ -9,9 +9,13 @@ var rootCmd = &cobra.Command{
 	Short: "A safer rm — moves files to ~/.toss/ instead of deleting them",
 	Long: `toss moves files and directories to ~/.toss/files/ instead of permanently
 deleting them. Files can be restored to their original location with 'toss restore'.`,
-	Args:         cobra.MinimumNArgs(1),
-	RunE:         runToss,
 	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
+		return runToss(cmd, args)
+	},
 }
 
 func Execute() error {

@@ -1,0 +1,84 @@
+.TH TOSS 1 "2026-02-18" "toss" "User Commands"
+.SH NAME
+toss \- a safer alternative to rm that moves files to a recoverable bin
+.SH SYNOPSIS
+.B toss
+[\fIFILE\fR...]
+.br
+.B toss
+\fICOMMAND\fR [\fIARGS\fR]
+.SH DESCRIPTION
+.B toss
+moves files and directories to \fI~/.toss/files/\fR instead of permanently
+deleting them. Each tossed item is tracked in a SQLite database at
+\fI~/.toss/toss.db\fR so it can be restored to its original location later.
+.PP
+Running
+.B toss
+with no arguments prints this help.
+.SH SUBCOMMANDS
+.TP
+.B list
+List all items currently in the bin, showing their ID, original path,
+size, and the time they were tossed.
+.TP
+.BR restore " [" \fIQUERY\fR "]"
+Restore a tossed item to its original location. If \fIQUERY\fR is given
+it filters the bin by name or path; if multiple matches are found an
+interactive picker is shown. Without a query the picker shows all items.
+.TP
+.BR empty " [" \fB\-f\fR "]"
+Permanently delete all items in the bin. Prompts for confirmation unless
+.B \-f
+is given.
+.TP
+.B mem
+Show the total disk space used by the bin.
+.SH OPTIONS
+.SS "Global options"
+.TP
+.BR \-h ", " \-\-help
+Print help for the command or subcommand and exit.
+.SS "empty options"
+.TP
+.BR \-f ", " \-\-force
+Skip the confirmation prompt when emptying the bin.
+.SH FILES
+.TP
+.I ~/.toss/toss.db
+SQLite database tracking every tossed item (original path, bin path,
+size, timestamp).
+.TP
+.I ~/.toss/files/
+Directory where tossed files are stored under a UUID-prefixed name.
+.SH EXAMPLES
+Toss a single file:
+.EX
+$ toss old-report.pdf
+.EE
+.PP
+Toss multiple items at once:
+.EX
+$ toss build/ node_modules/ tmp.log
+.EE
+.PP
+List what is in the bin:
+.EX
+$ toss list
+.EE
+.PP
+Restore an item whose name contains "report":
+.EX
+$ toss restore report
+.EE
+.PP
+Empty the bin without being prompted:
+.EX
+$ toss empty -f
+.EE
+.SH SEE ALSO
+.BR rm (1),
+.BR trash-put (1)
+.SH AUTHOR
+Written by roman91DE.
+Source code at \fIhttps://github.com/roman91DE/toss\fR.
