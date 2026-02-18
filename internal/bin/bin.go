@@ -124,6 +124,14 @@ func copyThenDelete(src, dest string) error {
 		if err := copyDir(src, dest); err != nil {
 			return err
 		}
+	} else if info.Mode()&fs.ModeSymlink != 0 {
+		linkTarget, err := os.Readlink(src)
+		if err != nil {
+			return err
+		}
+		if err := os.Symlink(linkTarget, dest); err != nil {
+			return err
+		}
 	} else {
 		if err := copyFile(src, dest, info.Mode()); err != nil {
 			return err
@@ -142,12 +150,19 @@ func copyDir(src, dest string) error {
 			return err
 		}
 		target := filepath.Join(dest, rel)
-		if d.IsDir() {
-			return os.MkdirAll(target, 0755)
+		if d.Type()&fs.ModeSymlink != 0 {
+			linkTarget, err := os.Readlink(path)
+			if err != nil {
+				return err
+			}
+			return os.Symlink(linkTarget, target)
 		}
 		info, err := d.Info()
 		if err != nil {
 			return err
+		}
+		if d.IsDir() {
+			return os.MkdirAll(target, info.Mode())
 		}
 		return copyFile(path, target, info.Mode())
 	})
