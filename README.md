@@ -44,6 +44,21 @@ Choose [1-2]:
 
 If the original location already has a file, you'll be asked to confirm before overwriting. Parent directories are recreated automatically if they were deleted.
 
+## Shell completion
+
+`toss` can generate completion scripts for bash, zsh, and fish. The script must be sourced — it does not install itself automatically.
+
+```bash
+# bash (add to ~/.bashrc for persistence)
+source <(toss completion bash)
+
+# zsh (add to ~/.zshrc for persistence)
+source <(toss completion zsh)
+
+# fish
+toss completion fish | source
+```
+
 ## How it works
 
 Files are moved to `~/.toss/files/` with a UUID prefix to prevent name collisions:
